@@ -1,15 +1,13 @@
 package com.example.streamsindetail;
 
-import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.summarizingInt;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.IntSummaryStatistics;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class StreamsDetailMain {
 
@@ -95,7 +93,7 @@ public class StreamsDetailMain {
 		if(min.isPresent())
 			System.out.println("The min cals in our menu is " + min);
 		
-		IntSummaryStatistics  menuStatistics = menu.stream().collect(summarizingInt(Dish::getCalories));
+		IntSummaryStatistics  menuStatistics = menu.stream().collect(Collectors.summarizingInt(Dish::getCalories));
 		System.out.println("this is the summary of the menu items: " + menuStatistics);
 		
 		//Traders and Transaction Domain:
@@ -105,25 +103,26 @@ public class StreamsDetailMain {
 		Trader brian = new Trader("Brian","Cambridge");
 
 		List<Transaction> transactions = Arrays.asList(
-		    new Transaction(brian, 2011, 300),
-		    new Transaction(raoul, 2012, 1000),
-		    new Transaction(raoul, 2011, 400),
-		    new Transaction(mario, 2012, 710),
-		    new Transaction(mario, 2012, 700),
-		    new Transaction(alan, 2012, 950)
+		    new Transaction(brian, 2011, 300, "USD"),
+		    new Transaction(raoul, 2012, 1000, "USD"),
+		    new Transaction(raoul, 2011, 400, "USD"),
+		    new Transaction(mario, 2012, 710, "USD"),
+		    new Transaction(mario, 2012, 700, "JP"),
+		    new Transaction(alan, 2012, 950, "JP")
 		);
 		
 		// Find all transactions in the year 2011 and sort them by value (small to high).
 		List<Transaction> transIn2011SmallToHigh = transactions.stream()
 																.filter(t -> t.getYear()==2011)
-																.sorted(comparing(Transaction::getValue))
-																.collect(toList());
+																.sorted(Comparator.comparing(Transaction::getValue))
+																.collect(Collectors.toList());
 		
 		//What are all the unique cities where the traders work?
-		Set<String> unqiueCitiesWhereTradersWork = transactions.stream().map(t -> t.getTrader().getCity()).collect(toSet());
+		Set<String> unqiueCitiesWhereTradersWork = transactions.stream().map(t -> t.getTrader().getCity()).collect(Collectors.toSet());
 		
 		
-		
+		// Group a list of transactions by their currency
+		Map<String, List<Transaction>> transactionsByCurrency = transactions.stream().collect(Collectors.groupingBy(Transaction::getCurrency));
 		
 		
 		
@@ -135,34 +134,34 @@ public class StreamsDetailMain {
 					.map(dishNameStr -> dishNameStr.split(""))
 					.flatMap(Arrays::stream)
 					.distinct()
-					.collect(toList());
+					.collect(Collectors.toList());
 	}
 
 	private static List<String> getDishesNames(List<Dish> menu) {
 		return menu.stream()
 					.map(Dish::getName)
-					.collect(toList());
+					.collect(Collectors.toList());
 	}
 
 	private static List<Dish> skipFirst2BringBackOthersUnder300Cal(List<Dish> menu) {
 		return menu.stream()
 					.filter(d -> d.getCalories() < 300)
 					.skip(2)
-					.collect(toList());
+					.collect(Collectors.toList());
 	}
 
 	private static List<Dish> getFirst3Under300(List<Dish> menu) {
 		return menu.stream()
 					.filter( d -> d.getCalories()<300)
 					.limit(3)
-					.collect(toList());
+					.collect(Collectors.toList());
 					
 	}
 
 	private static List<Dish> getVegetarianMenu(List<Dish> menu) {
 		return menu.stream()
 			.filter(Dish::isVegetarian)
-			.collect(toList());
+			.collect(Collectors.toList());
 	}
 
 }
