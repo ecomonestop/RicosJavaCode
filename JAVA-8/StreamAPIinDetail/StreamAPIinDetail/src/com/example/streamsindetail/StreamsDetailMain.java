@@ -124,6 +124,25 @@ public class StreamsDetailMain {
 		// Group a list of transactions by their currency
 		Map<String, List<Transaction>> transactionsByCurrency = transactions.stream().collect(Collectors.groupingBy(Transaction::getCurrency));
 		
+		//Find Max and Min
+		//Create a Comparator and pass it to the max/min Collectors.factory method
+		Comparator<Dish> maxComparitorOfDishCalories = Comparator.comparing(Dish::getCalories);
+		Optional<Dish> maxCalorieDish = menu.stream().collect(Collectors.maxBy(maxComparitorOfDishCalories));
+		
+		
+		//Total calories
+		int totalCalories = menu.stream().collect(Collectors.summingInt(Dish::getCalories));
+		
+		//Average Dish Calorie
+		double averageCalorie = menu.stream().collect(Collectors.averagingInt(Dish::getCalories));
+		
+		//Sumarrizing Int statistics
+		IntSummaryStatistics dishCalorieIntSummary = menu.stream().collect(Collectors.summarizingInt(Dish::getCalories));
+		System.out.println(dishCalorieIntSummary);
+		
+		
+		
+		
 		
 		
 	}
